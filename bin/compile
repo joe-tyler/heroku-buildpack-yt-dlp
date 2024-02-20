@@ -15,17 +15,24 @@ output() {
     fi
   done
 }
-set -eo pipefail
-BUILD_DIR=${1:-}
-cd $BUILD_DIR
-mkdir -p vendor/yt
-cd vendor/yt
-curl --location https://github.com/yt-dlp/yt-dlp/releases/download/2023.12.30/yt-dlp -o yt-dlp
-echo '91c667e0521951198e0fe348cad30b8f9c6b9b74  yt-dlp' > yt-dlp.sha
-sha1sum --check yt-dlp.sha
-chmod a+rx yt-dlp
-./yt-dlp --version
-PROFILE_PATH="$BUILD_DIR/.profile.d/yt-dlp.sh"
-mkdir -p $(dirname $PROFILE_PATH)
-echo 'export PATH="$PATH:${HOME}/vendor/yt"' >> $PROFILE_PATH
+
+# The build directory is the first argument
+BUILD_DIR=$1
+
+# The cache directory is the second argument
+CACHE_DIR=$2
+
+# Download and install yt-dlp
+echo "-----> Downloading and installing yt-dlp"
+curl -L https://github.com/yt-dlp/yt-dlp/releases/download/2023.12.30/yt-dlp -o $BUILD_DIR/yt-dlp
+chmod a+rx $BUILD_DIR/yt-dlp
+
+# Update yt-dlp (not necessary but recommended)
+echo "-----> Updating yt-dlp"
+$BUILD_DIR/yt-dlp -U
+echo "-----> Finished Updating yt-dlp"
+# Create a .profile.d script to add yt-dlp to the PATH
+mkdir -p $BUILD_DIR/.profile.d
+echo 'export PATH="$HOME:$PATH"' > $BUILD_DIR/.profile.d/yt-dlp.sh
+
 echo "Finished installing yt-dlp" | output

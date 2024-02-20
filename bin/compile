@@ -12,4 +12,4 @@ chmod a+rx yt-dlp
 ./yt-dlp --version
 PROFILE_PATH="$BUILD_DIR/.profile.d/yt-dlp.sh"
 mkdir -p $(dirname $PROFILE_PATH)
-echo 'export PATH="$PATH:/app/vendor/yt"' >> $PROFILE_PATH
+echo 'export PATH="$PATH:${HOME}/vendor/yt"' >> $PROFILE_PATH
